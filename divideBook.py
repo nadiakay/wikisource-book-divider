@@ -20,22 +20,26 @@ def unzip_book(path):
     return dir
 
 
-def convert_from_path(path: str):
+def divide_book(path):
     with open(path) as fp:
         soup = BeautifulSoup(fp, 'html.parser')
+
     divs = soup.find_all('div', {'class': 'mw-content-ltr'})
     toc_links = divs[0].find_all('a', href=re.compile("#calibre_link"))
     dir = os.path.split(path)[0]
+
     try:
         os.mkdir(dir)
     except FileExistsError:
         pass
+
     for i, div in enumerate(divs, start=1):
         title = None
         for link in toc_links:
             if link["href"] == "#" + div["id"]:
                 title = link.contents[0]
         print("title:", title)
+
         filename = dir.split(
             '/')[-1] + "/" + str(i) + ".html"
         doc = '<head><meta charset="utf-8">'
@@ -44,12 +48,14 @@ def convert_from_path(path: str):
         doc += '</head><body>' + str(div) + '</body>'
         with open(filename, "w") as file:
             file.write(doc)
-    return divs
+
+    return len(divs)
 
 
 if __name__ == '__main__':
     paths = sys.argv[1:]
     for path in paths:
         dir = unzip_book(path)
-        result = convert_from_path(dir + '/index.html')
+        count = divide_book(dir + '/index.html')
+        print("Extracted " + str(count) + " chapters")
     sys.exit(0)
