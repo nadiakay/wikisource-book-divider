@@ -74,7 +74,6 @@ if __name__ == '__main__':
     paths = sys.argv[1:]
     for path in paths:
         dir = unzip_book(path)
-        print("dir:", dir)
         chapters = list(reversed(divide_book(dir + '/index.html')))
         title, authors = parse_metadata(dir + '/metadata.opf')
         data = {"title": title, "authors": authors,
