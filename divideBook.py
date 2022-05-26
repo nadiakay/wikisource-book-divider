@@ -44,7 +44,7 @@ def divide_book(path):
 
         filename = dir.split(
             '/')[-1] + "/" + str(i) + ".html"
-        doc = '<head><meta charset="utf-8">'
+        doc = '<head><meta charset="utf-8"><link rel="stylesheet" href="style.css" type="text/css">'
         if(title):
             doc += '<title>' + title + '</title>'
         doc += '</head><body>' + str(div) + '</body>'
