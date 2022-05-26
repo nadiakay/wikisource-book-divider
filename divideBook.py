@@ -10,7 +10,16 @@ import sys
 import os
 import re
 import zipfile
+import json
 from bs4 import BeautifulSoup
+
+
+def parse_metadata(path):
+    with open(path) as fp:
+        soup = BeautifulSoup(fp, "xml")
+    title = soup.find('dc:title').contents[0]
+    authors = [author.contents[0] for author in soup.find_all('dc:creator')]
+    return title, authors
 
 
 def unzip_book(path):
@@ -27,6 +36,7 @@ def divide_book(path):
     divs = soup.find_all('div', {'class': 'mw-content-ltr'})
     toc_links = divs[0].find_all('a', href=re.compile("#calibre_link"))
     dir = os.path.split(path)[0]
+    chapters = []
 
     try:
         os.mkdir(dir)
@@ -34,6 +44,9 @@ def divide_book(path):
         pass
 
     for i, div in reversed(list(enumerate(divs, start=0))):
+        if i == len(divs) - 1:
+            continue
+
         title = None
         for toc_link in toc_links:
             if toc_link["href"] == "#" + div["id"]:
@@ -46,23 +59,28 @@ def divide_book(path):
                     divs[0].find('a', {'href': toc_link["href"]})[
                         "href"] = "./" + str(i) + ".html" + "#" + link["id"]
 
-        print("title:", title)
         filename = dir.split('/')[-1] + "/" + str(i) + ".html"
         doc = '<head><meta charset="utf-8"><link rel="stylesheet" href="style.css" type="text/css">'
+        chapters.append({"title": title, "id": i})
         if(title):
             doc += '<title>' + title + '</title>'
         doc += '</head><body>' + str(div) + '</body>'
         with open(filename, "w") as file:
             file.write(doc)
-
-    return len(divs)
+    return chapters
 
 
 if __name__ == '__main__':
     paths = sys.argv[1:]
     for path in paths:
         dir = unzip_book(path)
-        count = divide_book(dir + '/index.html')
+        print("dir:", dir)
+        chapters = list(reversed(divide_book(dir + '/index.html')))
+        title, authors = parse_metadata(dir + '/metadata.opf')
+        data = {"title": title, "authors": authors,
+                "slug": dir, "chapters": chapters}
         os.remove(dir + '/index.html')
-        print("Extracted " + str(count) + " chapters")
+        with open(dir + '/data.json', 'w') as f:
+            json.dump(data, f)
+        print("Extracted chapters:", *chapters, sep="\n")
     sys.exit(0)
