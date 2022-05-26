@@ -35,15 +35,19 @@ def divide_book(path):
 
     for i, div in reversed(list(enumerate(divs, start=0))):
         title = None
-        for link in toc_links:
-            if link["href"] == "#" + div["id"]:
-                title = link.contents[0]
-                divs[0].find('a', {'href': link["href"]})[
+        for toc_link in toc_links:
+            if toc_link["href"] == "#" + div["id"]:
+                title = toc_link.contents[0]
+                divs[0].find('a', {'href': toc_link["href"]})[
                     "href"] = "./" + str(i) + ".html"
-        print("title:", title)
+            else:
+                link = div.find(id=toc_link["href"][1:])
+                if link != None:
+                    divs[0].find('a', {'href': toc_link["href"]})[
+                        "href"] = "./" + str(i) + ".html" + "#" + link["id"]
 
-        filename = dir.split(
-            '/')[-1] + "/" + str(i) + ".html"
+        print("title:", title)
+        filename = dir.split('/')[-1] + "/" + str(i) + ".html"
         doc = '<head><meta charset="utf-8"><link rel="stylesheet" href="style.css" type="text/css">'
         if(title):
             doc += '<title>' + title + '</title>'
