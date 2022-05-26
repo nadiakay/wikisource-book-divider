@@ -63,5 +63,6 @@ if __name__ == '__main__':
     for path in paths:
         dir = unzip_book(path)
         count = divide_book(dir + '/index.html')
+        os.remove(dir + '/index.html')
         print("Extracted " + str(count) + " chapters")
     sys.exit(0)
