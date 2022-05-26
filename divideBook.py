@@ -3,7 +3,7 @@ Wikisource Book Divider
 
 Usage:  python3 divideBook.py <path_to_zipfile>
 
-Takes directories of zipped books as arguments. Divides each book into chapters and scrapes chapter titles from table of contents. Writes each chapter to a separate html document in the book directory.
+Takes directories of zipped books as arguments. Divides each book into chapters and scrapes chapter titles from table of contents. Updates chapter links in table of contents to point to respective file. Writes each chapter to a separate html document in the book directory.
 """
 
 import sys
@@ -33,11 +33,13 @@ def divide_book(path):
     except FileExistsError:
         pass
 
-    for i, div in enumerate(divs, start=1):
+    for i, div in reversed(list(enumerate(divs, start=0))):
         title = None
         for link in toc_links:
             if link["href"] == "#" + div["id"]:
                 title = link.contents[0]
+                divs[0].find('a', {'href': link["href"]})[
+                    "href"] = "./" + str(i) + ".html"
         print("title:", title)
 
         filename = dir.split(
