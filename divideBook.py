@@ -68,13 +68,9 @@ def divide_book(path):
                         "href"] = "./" + str(i) + ".html" + "#" + link["id"]
 
         filename = dir.split('/')[-1] + "/" + str(i) + ".html"
-        doc = '<head><meta charset="utf-8"><link rel="stylesheet" href="style.css" type="text/css">'
         chapters.append({"title": title, "id": i})
-        if(title):
-            doc += '<title>' + title + '</title>'
-        doc += '</head><body>' + str(div) + '</body>'
         with open(filename, "w") as file:
-            file.write(doc)
+            file.write(str(div))
     return chapters
 
 
