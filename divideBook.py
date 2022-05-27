@@ -33,6 +33,8 @@ def divide_book(path):
     with open(path) as fp:
         soup = BeautifulSoup(fp, 'html.parser')
 
+    [tag.parent.decompose() for tag in soup.find_all(
+        "span", {'data-page-index': True})]
     divs = soup.find_all('div', {'class': 'mw-content-ltr'})
     toc_links = divs[0].find_all('a', href=re.compile("#calibre_link"))
     dir = os.path.split(path)[0]
