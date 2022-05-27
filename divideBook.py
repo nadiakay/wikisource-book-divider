@@ -35,6 +35,7 @@ def divide_book(path):
 
     [tag.parent.decompose() for tag in soup.find_all(
         "span", {'data-page-index': True})]
+
     divs = soup.find_all('div', {'class': 'mw-content-ltr'})
     toc_links = divs[0].find_all('a', href=re.compile("#calibre_link"))
     dir = os.path.split(path)[0]
@@ -73,9 +74,9 @@ def divide_book(path):
 
 
 if __name__ == '__main__':
-    paths = sys.argv[1:]
-    for path in paths:
-        dir = unzip_book(path)
+    books = sys.argv[1:]
+    for book in books:
+        dir = unzip_book(book)
         chapters = list(reversed(divide_book(dir + '/index.html')))
         title, authors = parse_metadata(dir + '/metadata.opf')
         data = {"title": title, "authors": authors,
