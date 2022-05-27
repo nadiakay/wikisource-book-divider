@@ -36,6 +36,11 @@ def divide_book(path):
     [tag.parent.decompose() for tag in soup.find_all(
         "span", {'data-page-index': True})]
 
+    # todo: move this to a different script
+    for img in soup.find_all("img"):
+        img["src"] = os.path.join('/assets/book/',
+                                  os.path.split(path)[0], os.path.split(img["src"])[1])
+
     divs = soup.find_all('div', {'class': 'mw-content-ltr'})
     toc_links = divs[0].find_all('a', href=re.compile("#calibre_link"))
     dir = os.path.split(path)[0]

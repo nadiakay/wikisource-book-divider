@@ -6,37 +6,35 @@ import shutil
 import sys
 import os
 
-dest = "/Users/nadia/code/free-book-archive"
 
-
-def move_book(book):
+def move_book(book, dest):
     htmldocs = [p for p in os.listdir(book) if os.path.splitext(p)[
         1] == '.html']
 
-    if not os.path.exists(os.path.join(dest, "_html", book)):
-        os.mkdir(os.path.join(dest, "_html", book))
+    if not os.path.exists(os.path.join(dest, "_book", book)):
+        os.mkdir(os.path.join(dest, "_book", book))
 
     for doc in htmldocs:
         shutil.move(os.path.join(os.getcwd(), book, doc),
-                    os.path.join(dest, "_html", book, doc))
+                    os.path.join(dest, "_book", book, doc))
         print("moved " + os.path.join(os.getcwd(), book, doc) +
-              " to " + os.path.join(dest, "_html", book, doc))
+              " to " + os.path.join(dest, "_book", book, doc))
 
     images = [i for i in os.listdir(os.path.join(book, "images"))]
 
-    if not os.path.exists(os.path.join(dest, "public/assets", book)):
-        os.mkdir(os.path.join(dest, "public/assets", book))
+    if not os.path.exists(os.path.join(dest, "public/assets/book", book)):
+        os.mkdir(os.path.join(dest, "public/assets/book", book))
 
     for image in images:
         shutil.move(os.path.join(os.getcwd(), book, "images", image),
-                    os.path.join(dest, "public/assets", book))
+                    os.path.join(dest, "public/assets/book", book))
         print("moved " + os.path.join(os.getcwd(), book, "images", image) +
-              " to " + os.path.join(dest, "public/assets", book))
+              " to " + os.path.join(dest, "public/assets/book", book))
 
     shutil.move(os.path.join(os.getcwd(), book, "style.css"),
-                os.path.join(dest, "styles", book + ".css"))
+                os.path.join(dest, "styles/book", book + ".css"))
     print("moved " + os.path.join(os.getcwd(), book, "style.css") +
-          " to " + os.path.join(dest, "styles", book + ".css"))
+          " to " + os.path.join(dest, "styles/book", book + ".css"))
 
     shutil.move(os.path.join(os.getcwd(), book, "data.json"),
                 os.path.join(dest, "data/book", book + ".json"))
@@ -45,8 +43,9 @@ def move_book(book):
 
 
 if __name__ == '__main__':
-    books = sys.argv[1:]
+    dest = sys.argv[1]
+    books = sys.argv[2:]
     for book in books:
-        move_book(book)
+        move_book(book, dest)
 
     sys.exit(0)
