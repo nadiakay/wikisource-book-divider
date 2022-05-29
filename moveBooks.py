@@ -1,5 +1,7 @@
 """
-Script for moving the files created by divideBook into a next.js project directory structure
+Script for moving the files created by divideBook into a next.js project directory structure.
+
+Takes next.js project path as first argument and book directory paths as subsequent arguments. Moves all html files to  ./_book/<book_slug>, images to ./public/assets/book/<book_slug>, stylesheet to ./styles/book/<book_slug>.css, and json data to ./data/book/<book_slug>.json.
 """
 
 import shutil
